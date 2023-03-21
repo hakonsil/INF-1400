@@ -7,6 +7,10 @@ from stationary import *
 pygame.init() # initializing pygame
 clock = pygame.time.Clock() # setting up clock
 
+#################################################
+########## This is a test #######################
+#################################################
+
 class Game:
     def __init__(self):
         self.player_group = pygame.sprite.Group()
