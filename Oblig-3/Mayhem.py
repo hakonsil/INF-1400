@@ -7,10 +7,6 @@ from stationary import *
 pygame.init() # initializing pygame
 clock = pygame.time.Clock() # setting up clock
 
-#################################################
-########## This is a test #######################
-#################################################
-
 class Game:
     def __init__(self):
         self.player_group = pygame.sprite.Group()
@@ -58,13 +54,12 @@ class Game:
         self.vertical_movement(self.player_group, self.tile_group)
 
 
-"""----------------------------------------------"""
-x = Game()
+"""--------------- Game loop -------------------"""
 while True:
     clock.tick(FPS) # setting the framerate to 60 fps
     event = pygame.event.poll()
     if event.type == pygame.QUIT:
         break
-    x.run()
+    Game.run()
     pygame.display.update() #update the display
 
