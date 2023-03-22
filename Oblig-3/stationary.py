@@ -12,11 +12,12 @@ class fuel_bar(pygame.sprite.Sprite):
         self.fuel_amount = fuel_amount
         self.color = color
         self.image = pygame.Surface((10, self.fuel_amount))
+        self.image.fill(self.color)
         self.rect = self.image.get_rect(midbottom=(self.pos.x, self.pos.y))
 
-    def update(self):
+    def update(self, fuel_amount):
         self.image.fill(self.color)
-        self.image = pygame.Surface((10, self.fuel_amount))
+        self.image = pygame.Surface((10, fuel_amount))
         self.rect = self.image.get_rect(midbottom=(self.pos.x, self.pos.y))
         self.image.fill(self.color)
 
@@ -28,15 +29,15 @@ class landing_pad(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom=(self.pos.x, self.pos.y))
 
 class tile(pygame.sprite.Sprite):
-    def __init__(self, pos, img):
+    def __init__(self, pos):
         super().__init__()
         self.pos = pygame.Vector2(pos)
-        self.image = img
+        self.image = TILE
         self.rect = self.image.get_rect(topleft=(self.pos.x, self.pos.y))
 
-class info_card(pygame.sprite.Sprite):
-    def __init__(self, pos, img):
+class obstacle(pygame.sprite.Sprite):
+    def __init__(self, pos):
         super().__init__()
         self.pos = pygame.Vector2(pos)
-        self.image = img
-        self.rect = self.image.get_rect(midbottom=(self.pos.x, self.pos.y))
+        self.image = OBSTACLE
+        self.rect = self.image.get_rect(topleft=(self.pos.x, self.pos.y))

@@ -6,60 +6,110 @@ from movable import *
 from stationary import *
 pygame.init() # initializing pygame
 clock = pygame.time.Clock() # setting up clock
+"""---------------------------------------------"""
 
 class Game:
     def __init__(self):
-        self.player_group = pygame.sprite.Group()
-        self.tile_group = pygame.sprite.Group()
-        Red = player((1100, 500), (0, 0), RED_SHIP)
-        Yellow = player((100, 500), (0, 0), YELLOW_SHIP)
-        self.player_group.add(Red)
-        self.player_group.add(Yellow)
-        self.fuel_group = pygame.sprite.Group()
-        fuel_bar_red = fuel_bar((100, 200), Red.fuel, red)
-        fuel_bar_yellow = fuel_bar((300, 200), Yellow.fuel, green)
-        self.fuel_group.add(fuel_bar_red)
-        self.fuel_group.add(fuel_bar_yellow)
+        self.setup_elements()
+        self.setup_arena()
+        self.run()
 
     def setup_arena(self):
         for i in range(len(Arena[0])):
             for j in range(len(Arena)):
                 if Arena[j][i] == 1:
-                    self.tile_group.add(tile((i*TILE_SIZE, j*TILE_SIZE), TILE))
-        SCREEN.blit(BACKGROUND, (0, 0))
-        self.tile_group.update()
-        self.tile_group.draw(SCREEN)
+                    self.tile_group.add(tile((i*TILE_SIZE, j*TILE_SIZE)))
+                elif Arena[j][i] == 2:
+                    self.landing_pad_group.add(landing_pad((i*TILE_SIZE, j*TILE_SIZE)))
+                elif Arena[j][i] == 3:
+                    self.obstacle_group.add(obstacle((i*TILE_SIZE, j*TILE_SIZE)))
+        self.draw_arena_elements()
 
     def setup_elements(self):
+        # stationary object groups
+        self.tile_group = pygame.sprite.Group()
+        self.landing_pad_group = pygame.sprite.Group()
+        self.obstacle_group = pygame.sprite.Group()
+        self.fuel_bar_group = pygame.sprite.Group()
+        self.player_1_fuel_bar = fuel_bar((500, 200), 100, red)
+        self.fuel_bar_group.add(self.player_1_fuel_bar)
+
+        # movable object groups
+        self.player_group = pygame.sprite.Group()
+        self.player_1 = player((500, 200), (1, 0), RED_SHIP)
+        self.player_group.add(self.player_1)
+
+    def draw_arena_elements(self):
+        SCREEN.blit(BACKGROUND, (0, 0))
+        self.tile_group.draw(SCREEN)
+        self.landing_pad_group.draw(SCREEN)
+        self.fuel_bar_group.draw(SCREEN)
+        self.obstacle_group.draw(SCREEN)
+
+    def draw_player_elements(self):
         self.player_group.update()
         self.player_group.draw(SCREEN)
-        self.fuel_group.update()
-        self.fuel_group.draw(SCREEN)
 
-    def vertical_movement(self, players, tiles):
-        for player in players:
-            player.pos.y += player.speed.y
-            player.rect = player.image.get_rect(center=(player.pos.x, player.pos.y))
+    def input_player_1(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]:
+            self.player_1.image, self.player_1.rect = self.player_1.rotate_left(RED_SHIP)
+        if keys[pygame.K_RIGHT]:
+            self.player_1.image, self.player_1.rect = self.player_1.rotate_right(RED_SHIP)
+        if keys[pygame.K_UP]:
+            self.player_1.thrust()
+            self.player_1_fuel_bar.update(self.player_1.fuel)
+
+    def vertical_collision_detection(self):
+        for player in self.player_group:
             player.speed.y += g
-            for tile in tiles:
-                if player.rect.colliderect(tile.rect):
+            for tile in self.tile_group:
+                if player.rect.colliderect(tile.rect) and player.speed.y > 0:
+                    player.rect.bottom = tile.rect.top
                     player.speed.y = 0
-                    player.pos.y = tile.pos.y - player.rect.height/2
-                    player.rect = player.image.get_rect(center=(player.pos.x, player.pos.y))
-                    break
+                elif player.rect.colliderect(tile.rect) and player.speed.y < 0:
+                    player.rect.top = tile.rect.bottom
+                    player.speed.y = 0
+
+    def horizontal_collision_detection(self):  
+        for player in self.player_group:
+            for tile in self.tile_group:
+                if player.rect.colliderect(tile.rect) and player.speed.x > 0:
+                    player.speed.x = 0
+                    player.rect.right = tile.rect.left
+                elif player.rect.colliderect(tile.rect) and player.speed.x < 0:
+                    player.speed.x = 0
+                    player.rect.left = tile.rect.right
+
+    def game_loop(self):
+        # drawing the on screen elements
+        self.draw_arena_elements()
+        self.draw_player_elements()
+
+        # input from the players
+        self.input_player_1()
+
+        # collision detection
+        self.vertical_collision_detection()
+        self.horizontal_collision_detection()
+
+        # refueling
+
+        # updating the score
+
+        # finish the game
+
+
 
     def run(self):
-        self.setup_arena()
-        self.setup_elements()
-        self.vertical_movement(self.player_group, self.tile_group)
+        while True:
+            clock.tick(FPS) # setting the framerate to 60 fps
+            event = pygame.event.poll() 
+            if event.type == pygame.QUIT:
+                break
+            self.game_loop()
+            pygame.display.update() #update the display
+        print("Thanks for playing!")
 
-
-"""--------------- Game loop -------------------"""
-while True:
-    clock.tick(FPS) # setting the framerate to 60 fps
-    event = pygame.event.poll()
-    if event.type == pygame.QUIT:
-        break
-    Game.run()
-    pygame.display.update() #update the display
-
+if __name__ == "__main__":
+    Game()
