@@ -62,36 +62,34 @@ class Game:
 
     def vertical_collision_detection(self):
         for player in self.player_group:
-            player.speed.y += g
-            for tile in self.tile_group:
-                if player.rect.colliderect(tile.rect) and player.speed.y > 0:
+            if pygame.sprite.spritecollideany(player, self.tile_group):
+                if player.speed.y > 0:
                     player.rect.bottom = tile.rect.top
                     player.speed.y = 0
-                elif player.rect.colliderect(tile.rect) and player.speed.y < 0:
+                elif player.speed.y < 0:
                     player.rect.top = tile.rect.bottom
-                    player.speed.y = 0
+                    player.speed.y = g
 
     def horizontal_collision_detection(self):  
         for player in self.player_group:
-            for tile in self.tile_group:
-                if player.rect.colliderect(tile.rect) and player.speed.x > 0:
-                    player.speed.x = 0
+            if pygame.sprite.spritecollideany(player, self.tile_group):
+                if player.speed.x > 0:
                     player.rect.right = tile.rect.left
-                elif player.rect.colliderect(tile.rect) and player.speed.x < 0:
                     player.speed.x = 0
+                elif player.speed.x < 0:
                     player.rect.left = tile.rect.right
+                    player.speed.x = 0
 
     def game_loop(self):
         # drawing the on screen elements
         self.draw_arena_elements()
         self.draw_player_elements()
 
-        # input from the players
-        self.input_player_1()
-
         # collision detection
         self.vertical_collision_detection()
         self.horizontal_collision_detection()
+        # input from the players
+        self.input_player_1()
 
         # refueling
 
