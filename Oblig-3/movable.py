@@ -10,6 +10,7 @@ class movable(pygame.sprite.Sprite):
         self.speed = pygame.Vector2(speed)
         self.image = img
         self.rect = self.image.get_rect(center=(self.pos.x, self.pos.y))
+        self.mask = pygame.mask.from_surface(self.image)
 
     def move(self):
         """Moves the object"""
@@ -50,6 +51,16 @@ class player(movable):
             thrust.rotate_ip(-self.angle+180)
             self.speed += thrust
             self.fuel -= 0.1
+
+    def update(self):
+        self.move()
+
+class Bullet(movable):
+    def __init__(self, pos, speed, angle, img):
+        super().__init__(pos, speed, img)
+        self.angle = angle
+        self.speed = pygame.Vector2(0, 15)
+        self.speed.rotate_ip(-self.angle+180)
 
     def update(self):
         self.move()
