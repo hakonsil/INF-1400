@@ -7,43 +7,75 @@ clock = pygame.time.Clock() # setting up clock
 """---------------------------------------------"""
 
 class Game:
+    """Game 
+    ---
+    Contains all the mechanics of the game.
+    
+    Methods:
+        - __init__(): Initializes the game.
+        - setup_arena(): Sets up the arena.
+        - setup_elements(): Sets up the elements of the game.
+        - draw_arena_elements(): Draws the stationary elements of the game.
+        - draw_player_elements(): Draws the movable elements of the game.
+        - input_player_1(): Takes input from player 1.
+        - input_player_2(): Takes input from player 2.
+        - player_collision(): Checks if the players collide with another object.
+        - bullet_collision(): Checks if the bullets collide with another object.
+        - edge_detection(): Checks if the players are out of bounds.
+        - refueling(): Checks if the players are in contact with a landing pad, and if so, refuels them.
+        - finish_game(): Checks if a player has won, and if so, shows the winner.
+        - game_loop(): The main game loop.
+        - run(): Runs the game.
+        """
     def __init__(self):
         self.setup_elements()
         self.setup_arena()
         self.draw_arena_elements()
 
     def setup_arena(self):
-        # set up landing pads
+        """
+        Sets up the arena
+        ---
+        Sets up the landing pads and obstacles in the game
+        """
         for i in range(len(landing_pad_pos)):
-            self.landing_pad_group.add(Landing_pad(landing_pad_pos[i]))
-        # set up obstacles
+            self.landing_pad_group.add(Landing_pad(landing_pad_pos[i])) # set up landing pads
+
         for i in range(len(obstacle_pos)):
-            self.obstacle_group.add(Obstacle(obstacle_pos[i]))
+            self.obstacle_group.add(Obstacle(obstacle_pos[i])) # set up obstacles
 
     def setup_elements(self):
-        # stationary object groups
-        self.landing_pad_group = pygame.sprite.Group()
-        self.obstacle_group = pygame.sprite.Group()
-        self.fuel_bar_group = pygame.sprite.Group()
-        self.player_1_fuel_bar = Fuel_bar((X_SIZE-50, Y_SIZE-200), 100, red)
-        self.player_2_fuel_bar = Fuel_bar((50, Y_SIZE-200), 100, red)
-        self.fuel_bar_group.add(self.player_1_fuel_bar)
-        self.fuel_bar_group.add(self.player_2_fuel_bar)
+        """
+        Initializes all the visible elements of the game.
+        ---
+        """
 
-        # movable object groups
-        self.player_group = pygame.sprite.Group()
-        self.player_1 = Player(player_1_start_pos, player_1_init_vel, PLAYER_1)
-        self.player_2 = Player(player_2_start_pos, player_2_init_vel, PLAYER_2)
-        self.player_group.add(self.player_1)
-        self.player_group.add(self.player_2)
+        self.landing_pad_group = pygame.sprite.Group() # initialize landing pad group
+        self.obstacle_group = pygame.sprite.Group() # initialize obstacle group
 
-        self.bullet_group_1 = pygame.sprite.Group()
-        self.bullet_group_2 = pygame.sprite.Group()
-        self.score_group = pygame.sprite.Group()
-        self.score = Score_card(SCORE_CARD_POS, self.player_1.score, self.player_2.score)
-        self.score_group.add(self.score)
+        self.fuel_bar_group = pygame.sprite.Group() # initialize fuel bar group
+        self.player_1_fuel_bar = Fuel_bar((X_SIZE-50, Y_SIZE-200), 100, red) # fuel bar for player 1
+        self.player_2_fuel_bar = Fuel_bar((50, Y_SIZE-200), 100, red) # fuel bar for player 2
+        self.fuel_bar_group.add(self.player_1_fuel_bar) # add fuel bar to group
+        self.fuel_bar_group.add(self.player_2_fuel_bar) # add fuel bar to group
+
+        self.player_group = pygame.sprite.Group() # initialize player group
+        self.player_1 = Player(player_1_start_pos, player_1_init_vel, PLAYER_1) # initialize player 1
+        self.player_2 = Player(player_2_start_pos, player_2_init_vel, PLAYER_2) # initialize player 2
+        self.player_group.add(self.player_1) # add player 1 to group
+        self.player_group.add(self.player_2) # add player 2 to group
+
+        self.bullet_group_1 = pygame.sprite.Group() # initialize bullet group for player 1
+        self.bullet_group_2 = pygame.sprite.Group() # initialize bullet group for player 2
+        self.score_group = pygame.sprite.Group() # initialize a group for the score card
+        self.score = Score_card(SCORE_CARD_POS, self.player_1.score, self.player_2.score) # instantiate the score card
+        self.score_group.add(self.score) # add the score card to the group
 
     def draw_arena_elements(self):
+        """
+        Draws all the stationary objects that are visible in the game.
+        ---
+        """
         SCREEN.blit(BACKGROUND, (0, 0))
         self.landing_pad_group.draw(SCREEN)
         self.fuel_bar_group.draw(SCREEN)
@@ -51,6 +83,10 @@ class Game:
         self.score_group.draw(SCREEN)
 
     def draw_player_elements(self):
+        """
+        Draws all the moving objects in the game.
+        ---
+        """
         self.player_group.update()
         self.player_group.draw(SCREEN)
         self.bullet_group_1.update()
@@ -59,53 +95,76 @@ class Game:
         self.bullet_group_2.draw(SCREEN)
 
     def input_player_1(self):
+        """
+        Checks for input from player 1 and performs the corresponding action.
+        ---
+        """
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT]:
-            self.player_1.image, self.player_1.rect = self.player_1.rotate_left(PLAYER_1)
-        if keys[pygame.K_RIGHT]:
-            self.player_1.image, self.player_1.rect = self.player_1.rotate_right(PLAYER_1)
-        if keys[pygame.K_UP]:
-            self.player_1.image = pygame.transform.rotate(PLAYER_1_THRUST, self.player_1.angle)
-            self.player_1.thrust()
-            self.player_1_fuel_bar.update(self.player_1.fuel)
-        if keys[pygame.K_RSHIFT] and len(self.bullet_group_1) < 1:
-            self.bullet_group_1.add(Bullet(self.player_1.rect.center, self.player_1.speed, self.player_1.angle, BULLET))
-        if keys[pygame.K_UP] == False:
-            self.player_1.image = pygame.transform.rotate(PLAYER_1, self.player_1.angle)
+        if keys[pygame.K_LEFT]: # check if the left arrow key is pressed
+            self.player_1.image, self.player_1.rect = self.player_1.rotate_left(PLAYER_1) # rotate the player left
+
+        if keys[pygame.K_RIGHT]: # check if the right arrow key is pressed
+            self.player_1.image, self.player_1.rect = self.player_1.rotate_right(PLAYER_1) # rotate the player right
+        
+        if keys[pygame.K_UP]: # check if the up arrow key is pressed
+            self.player_1.image = pygame.transform.rotate(PLAYER_1_THRUST, self.player_1.angle) # change player image to thrust image
+            self.player_1.thrust() # apply thrust to the player
+            self.player_1_fuel_bar.update(self.player_1.fuel) # update the fuel bar
+
+        if keys[pygame.K_RSHIFT] and len(self.bullet_group_1) < 1: # check if the right shift key is pressed and if the player has any active bullets
+            self.bullet_group_1.add(Bullet(self.player_1.rect.center, self.player_1.speed, self.player_1.angle, BULLET)) # shoot a bullet
+        
+        if keys[pygame.K_UP] == False: # check if the up arrow key is not pressed
+            self.player_1.image = pygame.transform.rotate(PLAYER_1, self.player_1.angle) # keep the original player image
     
     def input_player_2(self):
+        """
+        Checks for input from player 2 and performs the corresponding action.
+        ---
+        """
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_a]:
-            self.player_2.image, self.player_2.rect = self.player_2.rotate_left(PLAYER_2)
-        if keys[pygame.K_d]:
-            self.player_2.image, self.player_2.rect = self.player_2.rotate_right(PLAYER_2)
-        if keys[pygame.K_w]:
-            self.player_2.image = pygame.transform.rotate(PLAYER_2_THRUST, self.player_2.angle)
-            self.player_2.thrust()
-            self.player_2_fuel_bar.update(self.player_2.fuel)
-        if keys[pygame.K_LSHIFT] and len(self.bullet_group_2) < 1:
-            self.bullet_group_2.add(Bullet(self.player_2.rect.center, self.player_2.speed, self.player_2.angle, BULLET))
-        if keys[pygame.K_w] == False:
-            self.player_2.image = pygame.transform.rotate(PLAYER_2, self.player_2.angle)
+        if keys[pygame.K_a]: # check if the a key is pressed
+            self.player_2.image, self.player_2.rect = self.player_2.rotate_left(PLAYER_2) # rotate the player left
+        if keys[pygame.K_d]: # check if the d key is pressed
+            self.player_2.image, self.player_2.rect = self.player_2.rotate_right(PLAYER_2) # rotate the player right
+        if keys[pygame.K_w]: # check if the w key is pressed
+            self.player_2.image = pygame.transform.rotate(PLAYER_2_THRUST, self.player_2.angle) # change player image to thrust image
+            self.player_2.thrust() # apply thrust to the player
+            self.player_2_fuel_bar.update(self.player_2.fuel) # update the fuel bar
+
+        if keys[pygame.K_LSHIFT] and len(self.bullet_group_2) < 1: # check if the left shift key is pressed and if the player has any active bullets
+            self.bullet_group_2.add(Bullet(self.player_2.rect.center, self.player_2.speed, self.player_2.angle, BULLET)) # shoot a bullet
+
+        if keys[pygame.K_w] == False: # check if the w key is not pressed
+            self.player_2.image = pygame.transform.rotate(PLAYER_2, self.player_2.angle) # keep the original player image
 
     def player_collision(self):
+        """
+        Check if a player is colliding with the other player, a landing pad or an obstacle.
+        ---
+        """
         for player in self.player_group:
-            if pygame.sprite.spritecollide(player, self.landing_pad_group, False, pygame.sprite.collide_mask):
-                if player.speed.y > 0:
-                    player.speed.y = 0
-                    player.speed.x = 0.99*player.speed.x
-                elif player.speed.y < 0:
-                    player.speed *= -1
-            if pygame.sprite.spritecollide(player, self.obstacle_group, False, pygame.sprite.collide_mask):
-                player.speed *= -1
-                player.score -= CRASH_DEDUCTION
-        if self.player_1.rect.colliderect(self.player_2.rect):
-            self.player_1.speed *= -1
-            self.player_2.speed *= -1
-            self.player_1.score -= CRASH_DEDUCTION
-            self.player_2.score -= CRASH_DEDUCTION
+            if pygame.sprite.spritecollide(player, self.landing_pad_group, False, pygame.sprite.collide_mask): # check if the player is colliding with a landing pad
+                if player.speed.y > 0: # check if the player is moving downwards
+                    player.speed.y = 0 # stop the players vertical motion
+                    player.speed.x = 0.99*player.speed.x # slow the players horizontal motion
+                elif player.speed.y < 0: # check if the player is moving upwards
+                    player.speed *= -1 # reverse the players vertical motion (bounce off the landing pad)
+            if pygame.sprite.spritecollide(player, self.obstacle_group, False, pygame.sprite.collide_mask): # check if the player is colliding with an obstacle
+                player.speed *= -1 # reverse the players motion (bounce off the obstacle)
+                player.score -= CRASH_DEDUCTION # deduct points for crashing into an obstacle
+        if self.player_1.rect.colliderect(self.player_2.rect): # check if the players are colliding
+            self.player_1.speed *= -1 # reverse the players motion (bounce off each other)
+            self.player_2.speed *= -1 # reverse the players motion (bounce off each other)
+            self.player_1.score -= CRASH_DEDUCTION # deduct points for crashing into the other player
+            self.player_2.score -= CRASH_DEDUCTION # deduct points for crashing into the other player
 
     def edge_detection(self):
+        """
+        Check if a player has gone off the edge of the screen.
+        ---
+        """
+        # checks if a player if off the edge of the screen, and if so kill the player
         for player in self.player_group:
             if player.pos.y < -50:
                 player.score -= MIN_SCORE*2
@@ -117,13 +176,21 @@ class Game:
                 player.score -= MIN_SCORE*2
 
     def refueling(self):
+        """
+        Check if a player is in contact with a landing pad and refuels the player.
+        ---
+        """
         for player in self.player_group:
-            for landing_pad in self.landing_pad_group:
-                if player.rect.colliderect(landing_pad.rect):
-                    if player.fuel < 100:
-                        player.fuel += REFUELING_RATE
+            if pygame.sprite.spritecollide(player, self.landing_pad_group, False, pygame.sprite.collide_mask): # check if the player is colliding with a landing pad
+                    if player.fuel < 100: # check if the player has a full tank of fuel
+                        player.fuel += REFUELING_RATE # refuel the player
 
     def bullet_collision(self):
+        """
+        Check if a bullet is off screen, or has collided with stationary object or a player.
+        ---
+        """
+        # removing bullets if they go off screen
         for bullet in self.bullet_group_1:
             if bullet.pos.y < 0 or bullet.pos.y > Y_SIZE or bullet.pos.x < 0 or bullet.pos.x > X_SIZE:
                 self.bullet_group_1.remove(bullet)
@@ -131,6 +198,7 @@ class Game:
             if bullet.pos.y < 0 or bullet.pos.y > Y_SIZE or bullet.pos.x < 0 or bullet.pos.x > X_SIZE:
                 self.bullet_group_2.remove(bullet)
 
+        # removing bullets if they collide with stationary objects
         for bullet in self.bullet_group_1:
             for pad in self.landing_pad_group:
                 if bullet.rect.colliderect(pad.rect):
@@ -138,12 +206,15 @@ class Game:
             for obstacle in self.obstacle_group:
                 if bullet.rect.colliderect(obstacle.rect):
                     self.bullet_group_1.remove(bullet)
+
+            # removing bullets if they collide with players, and reward/deduct points from the players
             if bullet.rect.colliderect(self.player_2.rect):
                 self.bullet_group_1.remove(bullet)
                 self.player_2.score -= SHOT_DEDUCTION
                 self.player_1.score += SHOT_POINTS
                 self.score.update(self.player_1.score, self.player_2.score)
 
+        # removing bullets if they collide with stationary objects
         for bullet in self.bullet_group_2:
             for pad in self.landing_pad_group:
                 if bullet.rect.colliderect(pad.rect):
@@ -151,6 +222,8 @@ class Game:
             for obstacle in self.obstacle_group:
                 if bullet.rect.colliderect(obstacle.rect):
                     self.bullet_group_2.remove(bullet)
+            
+            # removing bullets if they collide with players, and reward/deduct points from the players
             if bullet.rect.colliderect(self.player_1.rect):
                 self.bullet_group_2.remove(bullet)
                 self.player_1.score -= SHOT_DEDUCTION
@@ -158,16 +231,29 @@ class Game:
                 self.score.update(self.player_1.score, self.player_2.score)
 
     def finish_game(self, img1, img2):
+        """
+        Checks if a player has enough points to win/lose the game and displays the appropriate image.
+        ---
+        """
+
+        # checking if player 1 has won
         if self.player_1.score >= MAX_SCORE or self.player_2.score <= MIN_SCORE:
-            SCREEN.blit(img1, (0, 0))
+            SCREEN.blit(img1, (0, 0)) # displaying the win screen
             if pygame.key.get_pressed()[pygame.K_SPACE]:
-                self.__init__()
+                self.__init__() # restarting the game
+        
+        # checking if player 2 has won
         elif self.player_2.score >= MAX_SCORE or self.player_1.score <= MIN_SCORE:
-            SCREEN.blit(img2, (0, 0))
+            SCREEN.blit(img2, (0, 0)) # displaying the win screen
             if pygame.key.get_pressed()[pygame.K_SPACE]:
-                self.__init__()
+                self.__init__() # restarting the game
 
     def game_loop(self):
+        """
+        The main game loop.
+        ---
+        Calls on all the other methods to run the game.
+        """
         self.draw_arena_elements() # drawing the stationary elements of the game
 
         self.player_collision() # checking if the players have collided with anything
@@ -187,14 +273,18 @@ class Game:
         self.finish_game(P1_WIN, P2_WIN) # checking if the game is over
 
     def run(self):
+        """
+        Runs the game.
+        ---
+        """
         while True:
             clock.tick(FPS) # setting the framerate to 60 fps
-            event = pygame.event.poll() 
-            if event.type == pygame.QUIT:
-                break
-            self.game_loop()
+            event = pygame.event.poll() # checking for events
+            if event.type == pygame.QUIT: # checking if the user has quit the game
+                break # break out of the loop
+            self.game_loop() # run the game loop
             pygame.display.update() #update the display
-        print("Thanks for playing!")
+        print("Thanks for playing!") # goodbye message
 
 if __name__ == "__main__":
-    Game().run()
+    Game().run() # run the game
