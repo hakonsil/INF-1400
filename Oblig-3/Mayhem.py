@@ -4,6 +4,7 @@ from movable import *
 from stationary import *
 pygame.init() # initializing pygame
 clock = pygame.time.Clock() # setting up clock
+pygame.mixer.init() # initializing mixer
 """---------------------------------------------"""
 
 class Game:
@@ -248,6 +249,15 @@ class Game:
             if pygame.key.get_pressed()[pygame.K_SPACE]:
                 self.__init__() # restarting the game
 
+    def play_music(self, music):
+        """
+        Plays the music.
+        ---
+        """
+        pygame.mixer.music.load(music)
+        pygame.mixer.music.set_volume(0.5)
+        pygame.mixer.music.play()
+
     def game_loop(self):
         """
         The main game loop.
@@ -277,6 +287,7 @@ class Game:
         Runs the game.
         ---
         """
+        self.play_music(BACKGROUND_MUSIC_FILE) # playing the background music
         while True:
             clock.tick(FPS) # setting the framerate to 60 fps
             event = pygame.event.poll() # checking for events
