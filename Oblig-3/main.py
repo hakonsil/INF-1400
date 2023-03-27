@@ -1,10 +1,18 @@
+"""
+Main game file
+---
+Author: Håkon Silseth (hsi039)
+
+This file contains the main game loop, and the class for the game.
+Here is where the game mechanics are defined and the game is initialized and run.
+"""
 import pygame
 from config import *
 from movable import *
 from stationary import *
 pygame.init() # initializing pygame
 clock = pygame.time.Clock() # setting up clock
-pygame.mixer.init() # initializing mixer
+pygame.mixer.init() # initializing mixer (for sound)
 
 class Game:
     """Game 

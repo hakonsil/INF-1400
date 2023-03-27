@@ -1,3 +1,15 @@
+"""
+Stationary objects
+---
+Author: Håkon Silseth (hsi039)
+
+This file contains the classes for the stationary objects in the game.
+The defined classes are:
+    - Fuel_bar: Displays the amount of fuel left for each player.
+    - Landing_pad: The landing pad for the players to land on and refuel.
+    - Obstacle: An obstacle that the players can collide with.
+    - Score_card: Displays the score for each player.
+"""
 import pygame
 from config import *
 

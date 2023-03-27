@@ -1,16 +1,20 @@
+"""
+Configuration constants for the game.
+---
+Author: Håkon Silseth (hsi039)
+
+This file contains all the constants, variables and files used in the game.
+"""
 import pygame
 
-"""---Setting up the screen and loading images---"""
 # defining screen size and framerate
-X_SIZE = 1200
-Y_SIZE = 600
+X_SIZE = 1200 # screen width
+Y_SIZE = 600 # screen height
 FPS = 60 # framerate
 
-# setting up screen
-SCREEN = pygame.display.set_mode((X_SIZE, Y_SIZE), 0)
-pygame.display.set_caption("Mayhem")
+SCREEN = pygame.display.set_mode((X_SIZE, Y_SIZE), 0)  # set up the screen
+pygame.display.set_caption("Mayhem") # caption the game window
 
-"""----------Game settings----------"""
 PLAYER_SIZE = (60, 60) # size of player
 LANDING_PAD_SIZE = (200, 80) # size of landing pad
 BULLET_SIZE = (15,15) # size of bullet
@@ -18,7 +22,7 @@ PANEL_SIZE = (300, 100) # size of score panel
 FUEL_SIZE = (20, 300) # size of fuel bar
 OBSTACLE_SIZE = (60, 60) # size of obstacles
 
-# defining positions and initial values
+# defining positions and initial values for in-game objects
 landing_pad_pos =  [(0, Y_SIZE-0.75*LANDING_PAD_SIZE[1]),
                     (X_SIZE-LANDING_PAD_SIZE[0], Y_SIZE-0.75*LANDING_PAD_SIZE[1]),
                     (X_SIZE/2, Y_SIZE*(2/3))]

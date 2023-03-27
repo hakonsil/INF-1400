@@ -1,3 +1,14 @@
+"""
+Movable objects
+---
+Author: Håkon Silseth (hsi039)
+
+This file contains the classes for the moving objects in the game.
+The defined classes are:
+    - Movable: The base class for all moving objects.
+    - Player: The playable character in the game.
+    - Bullet: The bullets that the players can shoot.
+"""
 import pygame
 import numpy as np
 from config import *
