@@ -113,6 +113,7 @@ class Game:
             self.player_1_fuel_bar.update(self.player_1.fuel) # update the fuel bar
 
         if keys[pygame.K_RSHIFT] and len(self.bullet_group_1) < 1: # check if the right shift key is pressed and if the player has any active bullets
+            self.play_music(PEW_SOUND_FILE)
             self.bullet_group_1.add(Bullet(self.player_1.rect.center, self.player_1.speed, self.player_1.angle, BULLET)) # shoot a bullet
         
         if keys[pygame.K_UP] == False: # check if the up arrow key is not pressed
@@ -134,6 +135,7 @@ class Game:
             self.player_2_fuel_bar.update(self.player_2.fuel) # update the fuel bar
 
         if keys[pygame.K_LSHIFT] and len(self.bullet_group_2) < 1: # check if the left shift key is pressed and if the player has any active bullets
+            self.play_music(PEW_SOUND_FILE)
             self.bullet_group_2.add(Bullet(self.player_2.rect.center, self.player_2.speed, self.player_2.angle, BULLET)) # shoot a bullet
 
         if keys[pygame.K_w] == False: # check if the w key is not pressed
@@ -154,7 +156,9 @@ class Game:
             if pygame.sprite.spritecollide(player, self.obstacle_group, False, pygame.sprite.collide_mask): # check if the player is colliding with an obstacle
                 player.speed *= -1 # reverse the players motion (bounce off the obstacle)
                 player.score -= CRASH_DEDUCTION # deduct points for crashing into an obstacle
+                self.play_music(CRASH_SOUND_FILE) # play the crash sound
         if self.player_1.rect.colliderect(self.player_2.rect): # check if the players are colliding
+            self.play_music(CRASH_SOUND_FILE) # play the crash sound
             self.player_1.speed *= -1 # reverse the players motion (bounce off each other)
             self.player_2.speed *= -1 # reverse the players motion (bounce off each other)
             self.player_1.score -= CRASH_DEDUCTION # deduct points for crashing into the other player
@@ -249,13 +253,13 @@ class Game:
             if pygame.key.get_pressed()[pygame.K_SPACE]:
                 self.__init__() # restarting the game
 
-    def play_music(self, music):
+    def play_music(self, music, volume=1):
         """
         Plays the music.
         ---
         """
         pygame.mixer.music.load(music)
-        pygame.mixer.music.set_volume(0.5)
+        pygame.mixer.music.set_volume(volume)
         pygame.mixer.music.play()
 
     def game_loop(self):
@@ -287,7 +291,6 @@ class Game:
         Runs the game.
         ---
         """
-        self.play_music(BACKGROUND_MUSIC_FILE) # playing the background music
         while True:
             clock.tick(FPS) # setting the framerate to 60 fps
             event = pygame.event.poll() # checking for events

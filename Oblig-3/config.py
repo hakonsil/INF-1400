@@ -95,7 +95,8 @@ FUEL_OUTLINE_FILE = r"Oblig-3\files\fuel_outline.png"
 FUEL_OUTLINE = pygame.image.load(FUEL_OUTLINE_FILE)
 FUEL_OUTLINE = pygame.transform.scale(FUEL_OUTLINE, FUEL_SIZE)
 
-BACKGROUND_MUSIC_FILE = r"Oblig-3\files\background_music.mp3"
+PEW_SOUND_FILE = r"Oblig-3\files\pew.wav"
+CRASH_SOUND_FILE = r"Oblig-3\files\boink.mp3"
 
 # colors
 red = (255, 0, 0)
