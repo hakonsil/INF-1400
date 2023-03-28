@@ -47,10 +47,10 @@ class Game:
         Sets up the landing pads and obstacles in the game
         """
         for i in range(len(landing_pad_pos)):
-            self.landing_pad_group.add(Landing_pad(landing_pad_pos[i])) # set up landing pads
+            self.landing_pad_group.add(Stationary(landing_pad_pos[i], LANDING_PAD)) # set up landing pads
 
         for i in range(len(obstacle_pos)):
-            self.obstacle_group.add(Obstacle(obstacle_pos[i])) # set up obstacles
+            self.obstacle_group.add(Stationary(obstacle_pos[i], OBSTACLE)) # set up obstacles
 
     def setup_elements(self):
         """
@@ -251,12 +251,14 @@ class Game:
         # checking if player 1 has won
         if self.player_1.score >= MAX_SCORE or self.player_2.score <= MIN_SCORE:
             SCREEN.blit(img1, (0, 0)) # displaying the win screen
+            pygame.mixer.music.stop() # stopping the music
             if pygame.key.get_pressed()[pygame.K_SPACE]:
                 self.__init__() # restarting the game
         
         # checking if player 2 has won
         elif self.player_2.score >= MAX_SCORE or self.player_1.score <= MIN_SCORE:
             SCREEN.blit(img2, (0, 0)) # displaying the win screen
+            pygame.mixer.music.stop() # stopping the music
             if pygame.key.get_pressed()[pygame.K_SPACE]:
                 self.__init__() # restarting the game
 
@@ -309,7 +311,7 @@ class Game:
 
 if __name__ == "__main__":
     """
-    # remove the commenting to run cProfile
+    ## remove the commenting to run cProfile ##
     import cProfile
     cProfile.run('Game().run()') # profile the game
     """

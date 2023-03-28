@@ -51,7 +51,7 @@ MAX_FUEL = 100 # max fuel
 
 THRUST_POWER = 0.1 # acceleration from thrust
 ROTATION_SPEED = 0.1 # speed at which player rotates
-BULLET_SPEED = 15 # speed of bullets
+BULLET_SPEED = 20 # speed of bullets
 g = 1/FPS # gravity
 
 """----------Loading images---------"""
@@ -99,7 +99,7 @@ FUEL_OUTLINE_FILE = r"Oblig-3\files\fuel_outline.png"
 FUEL_OUTLINE = pygame.image.load(FUEL_OUTLINE_FILE)
 FUEL_OUTLINE = pygame.transform.scale(FUEL_OUTLINE, FUEL_SIZE)
 
-PEW_SOUND_FILE = r"Oblig-3\files\pew.wav"
+PEW_SOUND_FILE = r"Oblig-3\files\pew.mp3"
 CRASH_SOUND_FILE = r"Oblig-3\files\boink.mp3"
 
 # colors
