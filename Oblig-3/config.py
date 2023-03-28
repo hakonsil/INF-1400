@@ -1,16 +1,20 @@
+"""
+Configuration constants for the game.
+---
+Author: Håkon Silseth (hsi039)
+
+This file contains all the constants, variables and files used in the game.
+"""
 import pygame
 
-"""---Setting up the screen and loading images---"""
 # defining screen size and framerate
-X_SIZE = 1200
-Y_SIZE = 600
+X_SIZE = 1200 # screen width
+Y_SIZE = 600 # screen height
 FPS = 60 # framerate
 
-# setting up screen
-SCREEN = pygame.display.set_mode((X_SIZE, Y_SIZE), 0)
-pygame.display.set_caption("Mayhem")
+SCREEN = pygame.display.set_mode((X_SIZE, Y_SIZE), 0)  # set up the screen
+pygame.display.set_caption("Mayhem") # caption the game window
 
-"""----------Game settings----------"""
 PLAYER_SIZE = (60, 60) # size of player
 LANDING_PAD_SIZE = (200, 80) # size of landing pad
 BULLET_SIZE = (15,15) # size of bullet
@@ -18,7 +22,7 @@ PANEL_SIZE = (300, 100) # size of score panel
 FUEL_SIZE = (20, 300) # size of fuel bar
 OBSTACLE_SIZE = (60, 60) # size of obstacles
 
-# defining positions and initial values
+# defining positions and initial values for in-game objects
 landing_pad_pos =  [(0, Y_SIZE-0.75*LANDING_PAD_SIZE[1]),
                     (X_SIZE-LANDING_PAD_SIZE[0], Y_SIZE-0.75*LANDING_PAD_SIZE[1]),
                     (X_SIZE/2, Y_SIZE*(2/3))]
@@ -47,7 +51,7 @@ MAX_FUEL = 100 # max fuel
 
 THRUST_POWER = 0.1 # acceleration from thrust
 ROTATION_SPEED = 0.1 # speed at which player rotates
-BULLET_SPEED = 15 # speed of bullets
+BULLET_SPEED = 20 # speed of bullets
 g = 1/FPS # gravity
 
 """----------Loading images---------"""
@@ -95,7 +99,7 @@ FUEL_OUTLINE_FILE = r"Oblig-3\files\fuel_outline.png"
 FUEL_OUTLINE = pygame.image.load(FUEL_OUTLINE_FILE)
 FUEL_OUTLINE = pygame.transform.scale(FUEL_OUTLINE, FUEL_SIZE)
 
-PEW_SOUND_FILE = r"Oblig-3\files\pew.wav"
+PEW_SOUND_FILE = r"Oblig-3\files\pew.mp3"
 CRASH_SOUND_FILE = r"Oblig-3\files\boink.mp3"
 
 # colors

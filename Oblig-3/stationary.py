@@ -1,5 +1,42 @@
+"""
+Stationary objects
+---
+Author: Håkon Silseth (hsi039)
+
+This file contains the classes for the stationary objects in the game.
+The defined classes are:
+    - Stationary: A common class for all stationary objects that physically are a part of the game.
+    - Fuel_bar: Displays the amount of fuel left for each player.
+    - Score_card: Displays the score for each player.
+"""
 import pygame
 from config import *
+
+class Stationary(pygame.sprite.Sprite):
+    """
+    Stationary
+    ---
+    Displays the amount of fuel left for each player.
+
+    Arguments:
+        - pos (tuple): The position of the object.
+        - img (pygame.Surface): The image of the object.
+
+    Attributes:
+        - pos (pygame.Vector2): The position of the object.
+        - image (pygame.Surface): The image of the object.
+        - rect (pygame.Rect): The rect of the object.
+        - mask (pygame.Mask): The mask of the object.
+
+    Methods:
+        - __init__(pos, img): Initializes the object.
+    """
+    def __init__(self, pos, img):
+        super().__init__()
+        self.pos = pygame.Vector2(pos)
+        self.image = img
+        self.rect = self.image.get_rect(topleft=(self.pos.x, self.pos.y))
+        self.mask = pygame.mask.from_surface(self.image)
 
 class Fuel_bar(pygame.sprite.Sprite):
     """
@@ -14,7 +51,7 @@ class Fuel_bar(pygame.sprite.Sprite):
 
     Attributes:
         - pos (pygame.Vector2): The position of the object.
-        - fuel_amount (int): The amount of fuel left.
+        - fuel_amount (float): The amount of fuel left.
         - color (tuple): The color of the fuel bar.
         - image (pygame.Surface): The image of the object.
         - rect (pygame.Rect): The rect of the object.
@@ -47,51 +84,6 @@ class Fuel_bar(pygame.sprite.Sprite):
         self.image.fill(self.color) # coloring the fuel bar
         SCREEN.blit(FUEL_OUTLINE, (self.pos.x-10, self.pos.y-300)) # drawing the outline of the fuel bar
 
-class Landing_pad(pygame.sprite.Sprite):
-    """
-    Landing pad
-    ---
-    The landing pad for the players to land on and refuel.
-
-    Arguments:
-        - pos (tuple): The position of the object.
-
-    Attributes:
-        - pos (pygame.Vector2): The position of the object.
-        - image (pygame.Surface): The image of the object.
-        - rect (pygame.Rect): The rect of the object.
-        - mask (pygame.Mask): The mask of the object.
-    """
-
-    def __init__(self, pos):
-        super().__init__()
-        self.pos = pygame.Vector2(pos)
-        self.image = LANDING_PAD
-        self.rect = self.image.get_rect(topleft=(self.pos.x, self.pos.y))
-        self.mask = pygame.mask.from_surface(self.image)
-
-class Obstacle(pygame.sprite.Sprite):
-    """
-    Obstacle
-    ---
-    An obstacle that the players can collide with.
-
-    Arguments:
-        - pos (tuple): The position of the object.
-
-    Attributes:
-        - pos (pygame.Vector2): The position of the object.
-        - image (pygame.Surface): The image of the object.
-        - rect (pygame.Rect): The rect of the object.
-        - mask (pygame.Mask): The mask of the object.
-    """
-    def __init__(self, pos):
-        super().__init__()
-        self.pos = pygame.Vector2(pos)
-        self.image = OBSTACLE
-        self.rect = self.image.get_rect(topleft=(self.pos.x, self.pos.y))
-        self.mask = pygame.mask.from_surface(self.image)
-
 class Score_card(pygame.sprite.Sprite):
     """
     Score card
@@ -121,8 +113,7 @@ class Score_card(pygame.sprite.Sprite):
         self.pos = pygame.Vector2(pos)
         self.image = PANEL
         self.score1 = score1
-        self.score2 = score2
-        self.font = pygame.font.SysFont('twcen', 100)    
+        self.score2 = score2   
         self.rect = self.image.get_rect(midtop=(self.pos.x, self.pos.y))
 
     def update(self, score1, score2):
@@ -131,6 +122,7 @@ class Score_card(pygame.sprite.Sprite):
         self.score2 = score2
         self.image = PANEL
         self.rect = self.image.get_rect(midtop=(self.pos.x, self.pos.y))
+        self.font = pygame.font.SysFont('twcen', 100) # font of the text
         self.text1 = self.font.render(f"{self.score1}", True, black)
         self.text2 = self.font.render(f"{self.score2}", True, black)
         SCREEN.blit(self.image, self.rect)
